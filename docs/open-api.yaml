@@ -12,7 +12,7 @@ paths:
     get:
       tags:
         - orders
-      summary:  Get all new order
+      summary:  Get all orders
       description: Get existing orders in the system
       operationId: getAllOrders
       parameters:
@@ -144,7 +144,7 @@ paths:
     delete:
       tags:
         - orders
-      summary: Update order by id
+      summary: Delete order by id
       description: Delete order by id
       operationId: deleteOrderById
       parameters:
