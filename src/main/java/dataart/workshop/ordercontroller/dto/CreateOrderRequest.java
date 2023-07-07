@@ -7,6 +7,6 @@ import lombok.Setter;
 @Setter
 public class CreateOrderRequest {
 
-    private String bookId;
+    private Long bookId;
     private Integer count;
 }

@@ -1,12 +1,10 @@
 package dataart.workshop.ordercontroller.domain;
 
-import dataart.workshop.ordercontroller.dto.OrderItemDto;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.math.BigDecimal;
-import java.util.List;
 
 @Getter
 @Setter
@@ -15,14 +13,14 @@ import java.util.List;
 public class Order {
 
     @Id
-    @GeneratedValue
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long orderId;
 
     @Column
-    private String orderId;
+    private Long bookId;
 
-    @ElementCollection
-    private List<OrderItemDto> orderItems;
+    @Column
+    private Integer quantity;
 
     @Column
     private BigDecimal totalPrice;

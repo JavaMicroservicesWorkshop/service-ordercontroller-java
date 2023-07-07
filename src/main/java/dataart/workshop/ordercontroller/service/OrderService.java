@@ -11,8 +11,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.UUID;
+import java.math.BigDecimal;
 
 @Service
 @RequiredArgsConstructor
@@ -33,47 +34,55 @@ public class OrderService {
     }
 
     public CreateOrderResponse createOrderResponse(CreateOrderRequest createOrderRequest) {
-        String orderId = UUID.randomUUID().toString();
-
         BookDto bookDto = getBookDtoFromBookManager(createOrderRequest.getBookId());
-        Order order = orderConverter.toOrder(bookDto, createOrderRequest, orderId);
-        orderRepository.save(order);
+        Integer count = createOrderRequest.getCount();
 
-        return new CreateOrderResponse(orderId);
+        Order order = orderConverter.toOrder(bookDto, count);
+        Order savedOrder = orderRepository.save(order);
+
+        return new CreateOrderResponse(savedOrder.getOrderId());
     }
 
-    public OrderDto findByOrderId(String orderId) {
+    public OrderDto findByOrderId(Long orderId) {
         Order order = orderRepository.findByOrderId(orderId)
                 .orElseThrow(() -> new OrderNotFoundException(CANT_FIND_ORDER.formatted(orderId)));
 
         return orderConverter.toOrderDto(order);
     }
 
-    public OrderDto update(String orderId, UpdateOrderRequest updateOrderRequest) {
-        Order existingOrder = orderRepository.findByOrderId(orderId)
+    @Transactional
+    public OrderDto update(Long orderId, UpdateOrderRequest updateOrderRequest) {
+        Long bookId = updateOrderRequest.getBookId();
+        BookDto bookDto = getBookDtoFromBookManager(bookId);
+
+        Integer count = updateOrderRequest.getCount();
+
+        Order order = orderRepository.findByOrderId(orderId)
                 .orElseThrow(() -> new OrderNotFoundException(""));
+        Order updatedOrder = orderConverter.toOrder(order, bookDto, count);
 
-        String bookId = updateOrderRequest.getBookId();
-        Order updateOrder = orderConverter.toOrder(getBookDtoFromBookManager(bookId), updateOrderRequest);
-        update(existingOrder, updateOrder);
-
-        return orderConverter.toOrderDto(existingOrder);
+        return orderConverter.toOrderDto(updatedOrder);
     }
 
-    public void deleteByOrderId(String orderId) {
+    @Transactional
+    public void deleteByOrderId(Long orderId) {
         orderServiceValidator.validateOrderPresence(orderId);
 
         orderRepository.deleteByOrderId(orderId);
     }
 
-    private void update(Order destination, Order source) {
-        destination.setOrderItems(source.getOrderItems());
-        destination.setTotalPrice(source.getTotalPrice());
-    }
-
-    private static BookDto getBookDtoFromBookManager(String bookId) {
+    private static BookDto getBookDtoFromBookManager(Long bookId) {
         // TODO: 6/25/2023 Get bookDto from bookManager
 //        ...= bookRepository.findByBookId(bookId).orElseThrow();
-        return new BookDto();
+
+        //Mock
+        BookDto bookDto = new BookDto();
+        bookDto.setBookId(bookId);
+        bookDto.setTitle("10");
+        bookDto.setAuthor("100");
+        bookDto.setPrice(new BigDecimal("1.00"));
+        //Mock
+
+        return bookDto;
     }
 }

@@ -7,10 +7,10 @@ import java.util.Optional;
 
 public interface OrderRepository extends JpaRepository<Order, Long> {
 
-    Optional<Order> findByOrderId(String bookId);
+    Optional<Order> findByOrderId(Long orderId);
 
-    boolean existsByOrderId(String orderId);
+    boolean existsByOrderId(Long orderId);
 
-    void deleteByOrderId(String orderId);
+    void deleteByOrderId(Long orderId);
 
 }

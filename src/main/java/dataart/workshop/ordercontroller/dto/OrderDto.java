@@ -4,13 +4,13 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.math.BigDecimal;
-import java.util.List;
 
 @Getter
 @Setter
 public class OrderDto {
 
-    private String id;
-    private List<OrderItemDto> orderItems;
+    private Long orderId;
+    private Long bookId;
+    private Integer quantity;
     private BigDecimal totalPrice;
 }

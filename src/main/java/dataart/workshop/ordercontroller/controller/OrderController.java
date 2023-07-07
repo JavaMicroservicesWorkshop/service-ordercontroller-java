@@ -15,7 +15,8 @@ public class OrderController {
     private final OrderService orderService;
 
     @GetMapping
-    public PaginatedOrderDto getAll(@RequestParam(required = false) Integer page, @RequestParam(required = false) Integer size) {
+    public PaginatedOrderDto getAll(@RequestParam(required = false) Integer page,
+                                    @RequestParam(required = false) Integer size) {
         return orderService.findAll(page, size);
     }
 
@@ -26,17 +27,18 @@ public class OrderController {
     }
 
     @GetMapping("/{orderId}")
-    public OrderDto getByOrderId(@PathVariable String orderId) {
+    public OrderDto getByOrderId(@PathVariable Long orderId) {
         return orderService.findByOrderId(orderId);
     }
 
     @PutMapping("/{orderId}")
-    public OrderDto update(@PathVariable String orderId, @RequestBody @Valid UpdateOrderRequest updateOrderRequest) {
+    public OrderDto update(@PathVariable Long orderId,
+                           @RequestBody @Valid UpdateOrderRequest updateOrderRequest) {
         return orderService.update(orderId, updateOrderRequest);
     }
 
     @DeleteMapping("/{orderId}")
-    public void delete(@PathVariable String orderId) {
+    public void delete(@PathVariable Long orderId) {
         orderService.deleteByOrderId(orderId);
     }
 }

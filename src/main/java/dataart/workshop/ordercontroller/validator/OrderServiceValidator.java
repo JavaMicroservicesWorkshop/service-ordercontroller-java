@@ -11,7 +11,7 @@ public class OrderServiceValidator {
 
     private final OrderRepository orderRepository;
 
-    public void validateOrderPresence(String bookId) {
+    public void validateOrderPresence(Long bookId) {
         if (!orderRepository.existsByOrderId(bookId)) {
             throw new OrderNotFoundException("Can't find order by id: %s".formatted(bookId));
         }
