@@ -5,6 +5,7 @@ import dataart.workshop.ordercontroller.dto.BookDto;
 import dataart.workshop.ordercontroller.dto.OrderDto;
 import dataart.workshop.ordercontroller.dto.PaginatedOrderDto;
 import dataart.workshop.ordercontroller.service.BookService;
+import dataart.workshop.ordercontroller.utils.OrderUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Component;
@@ -24,7 +25,7 @@ public class OrderConverter {
         orderDto.setOrderId(order.getOrderId());
 
         BookDto bookDto = bookService.getBookDtoFromBookManager(order.getBookId());
-        orderDto.setBookName(bookDto.getAuthor() + " - " + bookDto.getTitle());
+        orderDto.setBookName(OrderUtils.getBeautifiedBookName(bookDto));
         orderDto.setQuantity(order.getQuantity());
         orderDto.setTotalPrice(order.getTotalPrice());
 

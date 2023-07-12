@@ -1,5 +1,6 @@
 package dataart.workshop.ordercontroller.controller;
 
+import dataart.workshop.ordercontroller.dto.BookOrdersDto;
 import dataart.workshop.ordercontroller.dto.CreateOrderRequest;
 import dataart.workshop.ordercontroller.dto.CreateOrderResponse;
 import dataart.workshop.ordercontroller.dto.OrderDto;
@@ -19,8 +20,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/orders")
@@ -47,7 +46,7 @@ public class OrderController {
     }
 
     @GetMapping("/book/{bookId}")
-    public List<OrderDto> getAllOrdersByBookId(@PathVariable Long bookId) {
+    public BookOrdersDto getAllOrdersByBookId(@PathVariable Long bookId) {
         return orderService.findAllByBookId(bookId);
     }
 
