@@ -2,7 +2,12 @@ package dataart.workshop.ordercontroller.service;
 
 import dataart.workshop.ordercontroller.converter.OrderConverter;
 import dataart.workshop.ordercontroller.domain.Order;
-import dataart.workshop.ordercontroller.dto.*;
+import dataart.workshop.ordercontroller.dto.BookDto;
+import dataart.workshop.ordercontroller.dto.CreateOrderRequest;
+import dataart.workshop.ordercontroller.dto.CreateOrderResponse;
+import dataart.workshop.ordercontroller.dto.OrderDto;
+import dataart.workshop.ordercontroller.dto.PaginatedOrderDto;
+import dataart.workshop.ordercontroller.dto.UpdateOrderRequest;
 import dataart.workshop.ordercontroller.exception.OrderNotFoundException;
 import dataart.workshop.ordercontroller.repository.OrderRepository;
 import dataart.workshop.ordercontroller.utils.PageUtils;
@@ -13,18 +18,21 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.math.BigDecimal;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class OrderService {
 
     private static final String CANT_FIND_ORDER = "Can't find order by id: %s";
+    private static final String BOOK_MANAGER_URL = "http://localhost:8082/api/v1/books/";
 
     private final OrderConverter orderConverter;
     private final OrderRepository orderRepository;
     private final PageUtils pageUtils;
     private final OrderServiceValidator orderServiceValidator;
+    private final BookService bookService;
 
     public PaginatedOrderDto findAll(Integer page, Integer size) {
         Pageable pageable = pageUtils.adjustPageable(page, size);
@@ -50,6 +58,14 @@ public class OrderService {
         return orderConverter.toOrderDto(order);
     }
 
+    public List<OrderDto> findAllByBookId(Long bookId) {
+        List<Order> orders = orderRepository.findAllByBookId(bookId);
+
+        return orders.stream()
+                .map(orderConverter::toOrderDto)
+                .collect(Collectors.toList());
+    }
+
     @Transactional
     public OrderDto update(Long orderId, UpdateOrderRequest updateOrderRequest) {
         Long bookId = updateOrderRequest.getBookId();
@@ -71,18 +87,7 @@ public class OrderService {
         orderRepository.deleteByOrderId(orderId);
     }
 
-    private static BookDto getBookDtoFromBookManager(Long bookId) {
-        // TODO: 6/25/2023 Get bookDto from bookManager
-//        ...= bookRepository.findByBookId(bookId).orElseThrow();
-
-        //Mock
-        BookDto bookDto = new BookDto();
-        bookDto.setBookId(bookId);
-        bookDto.setTitle("10");
-        bookDto.setAuthor("100");
-        bookDto.setPrice(new BigDecimal("1.00"));
-        //Mock
-
-        return bookDto;
+    private BookDto getBookDtoFromBookManager(Long bookId) {
+        return bookService.getBookDtoFromBookManager(bookId);
     }
 }

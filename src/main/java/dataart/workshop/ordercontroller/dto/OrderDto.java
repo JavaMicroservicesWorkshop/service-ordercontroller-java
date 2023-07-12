@@ -10,7 +10,7 @@ import java.math.BigDecimal;
 public class OrderDto {
 
     private Long orderId;
-    private Long bookId;
+    private String bookName;
     private Integer quantity;
     private BigDecimal totalPrice;
 }

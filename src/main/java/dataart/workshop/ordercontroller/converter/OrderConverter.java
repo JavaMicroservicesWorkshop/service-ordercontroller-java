@@ -4,6 +4,8 @@ import dataart.workshop.ordercontroller.domain.Order;
 import dataart.workshop.ordercontroller.dto.BookDto;
 import dataart.workshop.ordercontroller.dto.OrderDto;
 import dataart.workshop.ordercontroller.dto.PaginatedOrderDto;
+import dataart.workshop.ordercontroller.service.BookService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Component;
 
@@ -11,13 +13,18 @@ import java.math.BigDecimal;
 import java.util.List;
 
 @Component
+@RequiredArgsConstructor
 public class OrderConverter {
+
+    private final BookService bookService;
 
     public OrderDto toOrderDto(Order order) {
         OrderDto orderDto = new OrderDto();
 
         orderDto.setOrderId(order.getOrderId());
-        orderDto.setBookId(order.getBookId());
+
+        BookDto bookDto = bookService.getBookDtoFromBookManager(order.getBookId());
+        orderDto.setBookName(bookDto.getAuthor() + " - " + bookDto.getTitle());
         orderDto.setQuantity(order.getQuantity());
         orderDto.setTotalPrice(order.getTotalPrice());
 
