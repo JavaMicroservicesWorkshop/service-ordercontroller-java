@@ -1,0 +1,244 @@
+openapi: 3.0.3
+info:
+  title: Order Controller
+  description: |-
+    Service which will controlls Orders in the system and provides an API to create and manager them
+  version: 1.0.11
+tags:
+  - name: orders
+    description: Orders API
+paths:
+  /api/v1/orders:
+    get:
+      tags:
+        - orders
+      summary:  Get all orders
+      description: Get existing orders in the system
+      operationId: getAllOrders
+      parameters:
+        - name: page
+          in: query
+          description: desired page index
+          required: false
+          schema:
+            type: integer
+            format: int64
+        - name: size
+          in: query
+          description: desired page size
+          required: false
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Found successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedOrderDto'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestDto'
+    post:
+      tags:
+        - orders
+      summary:  Create new order
+      description: Create new order into the system
+      operationId: createOrder
+      requestBody:
+        description: Create order
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/CreateOrderItemRequest'
+        required: true
+      responses:
+        '201':
+          description: Added successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateOrderResponse'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestDto'
+  /api/v1/orders/{id}:
+    get:
+      tags:
+        - orders
+      summary: Get order by id
+      description: Get order by id
+      operationId: getOrderById
+      parameters:
+        - name: id
+          in: path
+          description: ID of order to get
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Found successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrderDto'
+        '404':
+          description: Book not found by id
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFoundDto'
+    put:
+      tags:
+        - orders
+      summary: Update order by id
+      description: Update order by id
+      operationId: updateOrderById
+      parameters:
+        - name: id
+          in: path
+          description: ID of order to delete
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        description: Create order
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/CreateOrderItemRequest'
+        required: true
+      responses:
+        '200':
+          description: Added successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateOrderResponse'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestDto'
+        '404':
+          description: Book not found by id
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFoundDto'
+    delete:
+      tags:
+        - orders
+      summary: Delete order by id
+      description: Delete order by id
+      operationId: deleteOrderById
+      parameters:
+        - name: id
+          in: path
+          description: ID of order to delete
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Deleted successfully
+        '404':
+          description: Book not found by id
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFoundDto'
+components:
+  schemas:
+    BadRequestDto:
+      type: object
+      properties:
+        error:
+          type: string
+          example: Bad request
+        errorMessages:
+          type: array
+          items:
+            type: object
+          example: ["bookId : must not be blank"]
+    OrderDto:
+      type: object
+      properties:
+        id:
+          type: string
+          example: 164fd4c1-eb64-4301-bd8d-111a601e7bd6
+        orderItems:
+          type: array
+          items:
+            $ref: '#/components/schemas/OrderItemDto'
+        totalPrice:
+          type: integer
+          example: 60
+    OrderItemDto:
+      type: object
+      properties:
+        bookId:
+          type: string
+          example: e4772812-ed55-4fe5-8050-34bac72b61e5
+        quantity:
+          type: integer
+          example: 2
+        itemPrice:
+          type: integer
+          example: 60
+    NotFoundDto:
+      type: object
+      properties:
+        error:
+          type: string
+          example: Not Found
+        errorMessage:
+          type: string
+          example: Can't find order with id 5de8b415-80a0-4e35-afbb-90467724d835
+    CreateOrderItemRequest:
+      type: object
+      properties:
+        bookId:
+          type: string
+          example: e4772812-ed55-4fe5-8050-34bac72b61e5
+        count:
+          type: integer
+          example: 2
+    CreateOrderResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          example: 2df5278e-f2b3-4fe6-b722-9e2287a47330
+    PaginatedOrderDto:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/OrderDto'
+        page:
+          type: integer
+          example: 0
+        size:
+          type: integer
+          example: 10
+        totalPages:
+          type: integer
+          example: 2
